@@ -1,15 +1,35 @@
 const express = require('express')
 const app = express()
+const people = require('./people.json')
 
+//use pug engine
 app.set('view engine', 'pug');
 
+// serve static flies from the 'public' folder
+app.use(express.static(__dirname + '/public'));
+
+// /test routes to another response
 app.get('/test', (req,res)=> {
 res.send('Hello World!');
 });
 
+// index routes to index page with variables being passed in 
 app.get('/', (req,res)=> {
-res.send('Req: update'+ res);
+res.render('index',{
+title: 'Index Page',
+name: 'AJ',
+people: people.profiles
+});
+//res.send('Req: update'+ res);
 //console.dir(res);
+});
+
+app.get('/profile', (req, res)=> {
+const person = people.profiles.find(p => p.id === req.query.id);
+res.render('profile', {
+title: `About ${person.firstname} ${person.lastname}`, 
+person
+});
 });
 
 const server = app.listen(7002, ()=> {
